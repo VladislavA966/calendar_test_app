@@ -3,5 +3,5 @@ import 'package:calendar_test_app/features/events/domain/entity/event_params.dar
 import 'package:dartz/dartz.dart';
 
 abstract interface class EventsRepository {
-  Future<Either<Failure, dynamic>> fetchEvents(EventParams params);
+  Future<Either<Failure, void>> fetchEvents(EventParams params);
 }

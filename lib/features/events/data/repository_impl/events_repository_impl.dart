@@ -15,7 +15,7 @@ class EventsRepositoryImpl implements EventsRepository {
   final EventsDataSource _dataSource;
   EventsRepositoryImpl(this._dataSource);
   @override
-  Future<Either<Failure, dynamic>> fetchEvents(EventParams params) async {
+  Future<Either<Failure, Unit>> fetchEvents(EventParams params) async {
     if (!await NetworkChecker.hasConnection()) {
       return Left(
         NetworkFailure(
@@ -30,7 +30,7 @@ class EventsRepositoryImpl implements EventsRepository {
         params.endDate,
       );
       if (httpResponse.response.statusCode == HttpStatus.ok) {
-        return Right(httpResponse.response.data);
+        return Right(unit);
       } else {
         return Left(
           ServerFailure(

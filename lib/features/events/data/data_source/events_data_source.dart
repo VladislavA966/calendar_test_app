@@ -10,7 +10,7 @@ abstract class EventsDataSource {
   @factoryMethod
   factory EventsDataSource(Dio dio) = _EventsDataSource;
   @GET('/api/test-task')
-  Future<HttpResponse<dynamic>> fetchEvents(
+  Future<HttpResponse<void>> fetchEvents(
     @Query('start_date') String startDate,
     @Query('end_date') String? endDate,
   );
