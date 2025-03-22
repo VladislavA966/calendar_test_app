@@ -32,6 +32,9 @@ Failure _handleError(DioException error) {
     case DioExceptionType.cancel:
       return DataSource.cancel.getFailure();
 
+    case DioExceptionType.connectionError:
+      return DataSource.noInternetConnection.getFailure();
+
     default:
       return DataSource.defaultError.getFailure();
   }

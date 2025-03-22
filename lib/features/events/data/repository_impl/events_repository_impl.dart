@@ -3,6 +3,7 @@ import 'package:calendar_test_app/core/constants/code_responces.dart';
 import 'package:calendar_test_app/core/constants/network_constants.dart';
 import 'package:calendar_test_app/core/error/exception_handler.dart';
 import 'package:calendar_test_app/core/error/failure.dart';
+import 'package:calendar_test_app/core/utils/network_utils.dart';
 import 'package:calendar_test_app/features/events/data/data_source/events_data_source.dart';
 import 'package:calendar_test_app/features/events/domain/entity/event_params.dart';
 import 'package:calendar_test_app/features/events/domain/repository/events_repository.dart';
@@ -16,10 +17,9 @@ class EventsRepositoryImpl implements EventsRepository {
   EventsRepositoryImpl(this._dataSource);
   @override
   Future<Either<Failure, dynamic>> fetchEvents(EventParams params) async {
-    final connection = await Connectivity().checkConnectivity();
-    if (connection == [ConnectivityResult.none]) {
+    if (!await NetworkChecker.hasConnection()) {
       return Left(
-        const NetworkFailure(
+        NetworkFailure(
           ResponseCode.noInternetConnection,
           strNoInternetError,
         ),
@@ -27,7 +27,9 @@ class EventsRepositoryImpl implements EventsRepository {
     }
     try {
       final httpResponse = await _dataSource.fetchEvents(
-          '2025-03-04T00:00:00', '2025-03-11T00:00:00');
+        params.startDate,
+        params.endDate,
+      );
       if (httpResponse.response.statusCode == HttpStatus.ok) {
         return Right(httpResponse.response.data);
       } else {
