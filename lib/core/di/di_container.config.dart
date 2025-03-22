@@ -15,6 +15,7 @@ import 'package:injectable/injectable.dart' as _i526;
 
 import '../../features/events/data/data_source/events_data_source.dart'
     as _i1020;
+import '../../features/events/data/mappers/event_mapper.dart' as _i431;
 import '../../features/events/data/repository_impl/events_repository_impl.dart'
     as _i122;
 import '../../features/events/domain/repository/events_repository.dart'
@@ -36,10 +37,14 @@ extension GetItInjectableX on _i174.GetIt {
     );
     final dioModule = _$DioModule();
     gh.singleton<_i361.Dio>(() => dioModule.baseModule());
+    gh.lazySingleton<_i431.EventModelToEntityMapper>(
+        () => _i431.EventModelToEntityMapper());
     gh.singleton<_i1020.EventsDataSource>(
         () => _i1020.EventsDataSource(gh<_i361.Dio>()));
-    gh.singleton<_i161.EventsRepository>(
-        () => _i122.EventsRepositoryImpl(gh<_i1020.EventsDataSource>()));
+    gh.singleton<_i161.EventsRepository>(() => _i122.EventsRepositoryImpl(
+          gh<_i1020.EventsDataSource>(),
+          gh<_i431.EventModelToEntityMapper>(),
+        ));
     gh.singleton<_i466.FetchEventsUseCase>(
         () => _i466.FetchEventsUseCase(gh<_i161.EventsRepository>()));
     return this;

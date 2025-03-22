@@ -18,7 +18,7 @@ class _EventsDataSource implements EventsDataSource {
   final ParseErrorLogger? errorLogger;
 
   @override
-  Future<HttpResponse<void>> fetchEvents(
+  Future<HttpResponse<List<EventModel>>> fetchEvents(
     String startDate,
     String? endDate,
   ) async {
@@ -30,7 +30,7 @@ class _EventsDataSource implements EventsDataSource {
     queryParameters.removeWhere((k, v) => v == null);
     final _headers = <String, dynamic>{};
     const Map<String, dynamic>? _data = null;
-    final _options = _setStreamType<HttpResponse<void>>(
+    final _options = _setStreamType<HttpResponse<List<EventModel>>>(
       Options(method: 'GET', headers: _headers, extra: _extra)
           .compose(
             _dio.options,
@@ -40,8 +40,19 @@ class _EventsDataSource implements EventsDataSource {
           )
           .copyWith(baseUrl: _combineBaseUrls(_dio.options.baseUrl, baseUrl)),
     );
-    final _result = await _dio.fetch<void>(_options);
-    final httpResponse = HttpResponse(null, _result);
+    final _result = await _dio.fetch<List<dynamic>>(_options);
+    late List<EventModel> _value;
+    try {
+      _value = _result.data!
+          .map(
+            (dynamic i) => EventModel.fromJson(i as Map<String, dynamic>),
+          )
+          .toList();
+    } on Object catch (e, s) {
+      errorLogger?.logError(e, s, _options);
+      rethrow;
+    }
+    final httpResponse = HttpResponse(_value, _result);
     return httpResponse;
   }
 

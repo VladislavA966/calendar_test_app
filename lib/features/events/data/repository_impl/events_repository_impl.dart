@@ -5,6 +5,8 @@ import 'package:calendar_test_app/core/error/exception_handler.dart';
 import 'package:calendar_test_app/core/error/failure.dart';
 import 'package:calendar_test_app/core/utils/network_utils.dart';
 import 'package:calendar_test_app/features/events/data/data_source/events_data_source.dart';
+import 'package:calendar_test_app/features/events/data/mappers/event_mapper.dart';
+import 'package:calendar_test_app/features/events/domain/entity/event_entity.dart';
 import 'package:calendar_test_app/features/events/domain/entity/event_params.dart';
 import 'package:calendar_test_app/features/events/domain/repository/events_repository.dart';
 import 'package:dartz/dartz.dart';
@@ -13,9 +15,11 @@ import 'package:injectable/injectable.dart';
 @Singleton(as: EventsRepository)
 class EventsRepositoryImpl implements EventsRepository {
   final EventsDataSource _dataSource;
-  EventsRepositoryImpl(this._dataSource);
+  final EventModelToEntityMapper _mapper;
+  EventsRepositoryImpl(this._dataSource, this._mapper);
   @override
-  Future<Either<Failure, Unit>> fetchEvents(EventParams params) async {
+  Future<Either<Failure, List<EventEntity>>> fetchEvents(
+      EventParams params) async {
     if (!await NetworkChecker.hasConnection()) {
       return Left(
         NetworkFailure(
@@ -24,13 +28,16 @@ class EventsRepositoryImpl implements EventsRepository {
         ),
       );
     }
+
     try {
       final httpResponse = await _dataSource.fetchEvents(
         params.startDate,
         params.endDate,
       );
+
       if (httpResponse.response.statusCode == HttpStatus.ok) {
-        return Right(unit);
+        final events = (httpResponse.data).map(_mapper.map).toList();
+        return Right(events);
       } else {
         return Left(
           ServerFailure(

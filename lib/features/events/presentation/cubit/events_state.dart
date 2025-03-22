@@ -15,8 +15,11 @@ final class EventsLoading extends EventsState {
 }
 
 final class EventsLoaded extends EventsState {
+  final List<EventEntity> events;
+
+  const EventsLoaded({required this.events});
   @override
-  List<Object?> get props => [];
+  List<Object?> get props => [events];
 }
 
 final class EventsError extends EventsState {

@@ -2,6 +2,7 @@ import 'package:calendar_test_app/core/recources/dimensions.dart';
 import 'package:calendar_test_app/features/events/presentation/cubit/events_cubit.dart';
 import 'package:calendar_test_app/features/events/presentation/view_model/events_view_model.dart';
 import 'package:calendar_test_app/features/events/presentation/widgets/app_text_field.dart';
+import 'package:calendar_test_app/features/events/presentation/widgets/event_tile.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
@@ -54,11 +55,13 @@ class _EventsScreenState extends State<EventsScreen> {
                 hintText: 'Start date',
                 controller: _startDateController,
                 onTap: () => viewModel.pickDate(isStartDate: true),
+                onSuffixTapped: () => viewModel.onClearDate(isStartDate: true),
               ),
               AppTextField(
                 hintText: 'End date',
                 controller: _endDateController,
                 onTap: () => viewModel.pickDate(isStartDate: false),
+                onSuffixTapped: () => viewModel.onClearDate(isStartDate: false),
               ),
               ElevatedButton(
                 onPressed: viewModel.onSearch,
@@ -71,7 +74,19 @@ class _EventsScreenState extends State<EventsScreen> {
                   if (state is EventsLoading) {
                     return Center(child: CircularProgressIndicator());
                   } else if (state is EventsLoaded) {
-                    return Column(children: []);
+                    final events = state.events;
+                    if (events.isEmpty) {
+                      return Text('List of Events is empty');
+                    }
+                    return Expanded(
+                      child: ListView.builder(
+                        itemCount: events.length,
+                        itemBuilder: (context, index) {
+                          final event = events[index];
+                          return EventTile(event: event);
+                        },
+                      ),
+                    );
                   }
                   return SizedBox.shrink();
                 },

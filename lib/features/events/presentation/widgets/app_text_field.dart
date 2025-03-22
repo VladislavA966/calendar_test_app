@@ -5,11 +5,13 @@ class AppTextField extends StatelessWidget {
   final TextEditingController controller;
   final bool? readOnly;
   final VoidCallback onTap;
+  final VoidCallback? onSuffixTapped;
 
   const AppTextField({
     required this.hintText,
     required this.onTap,
     required this.controller,
+    this.onSuffixTapped,
     this.readOnly,
     super.key,
   });
@@ -29,7 +31,10 @@ class AppTextField extends StatelessWidget {
             suffixIcon: hasText
                 ? IconButton(
                     icon: const Icon(Icons.clear),
-                    onPressed: () => controller.clear(),
+                    onPressed: () {
+                      controller.clear();
+                      onSuffixTapped?.call();
+                    },
                   )
                 : null,
             border: OutlineInputBorder(

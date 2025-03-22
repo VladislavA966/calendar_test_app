@@ -29,6 +29,14 @@ class EventsViewModel {
     );
   }
 
+  void onClearDate({required bool isStartDate}) {
+    if (isStartDate) {
+      _params = _params.copyWith(startDate: '');
+    } else {
+      _params = _params.copyWith(endDate: '');
+    }
+  }
+
   Future<void> pickDate({required bool isStartDate}) async {
     final pickedDate = await showDatePicker(
       context: context,
@@ -40,7 +48,7 @@ class EventsViewModel {
     if (pickedDate == null || !isMounted()) return;
 
     final formattedDisplay = DateFormat('dd.MM.yyyy').format(pickedDate);
-    final formattedApi = DateFormat('yyyy-MM-dd').format(pickedDate);
+    final formattedApi = DateFormat('dd-MM-yyyy').format(pickedDate);
 
     if (isStartDate) {
       startController.text = formattedDisplay;
