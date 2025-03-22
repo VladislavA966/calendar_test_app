@@ -7,7 +7,6 @@ import 'package:calendar_test_app/core/utils/network_utils.dart';
 import 'package:calendar_test_app/features/events/data/data_source/events_data_source.dart';
 import 'package:calendar_test_app/features/events/domain/entity/event_params.dart';
 import 'package:calendar_test_app/features/events/domain/repository/events_repository.dart';
-import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:dartz/dartz.dart';
 import 'package:injectable/injectable.dart';
 
